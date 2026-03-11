@@ -1,33 +1,50 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 void main() {
   runApp(const MyApp());
 }
+
+final GoRouter _router = GoRouter(
+  initialLocation: '/',
+  routes: [
+    GoRoute(
+      path: '/',
+      builder: (context, state) => const MyHomePage(title: 'Home TechEdge'),
+    ),
+    GoRoute(
+      path: '/settings',
+      builder: (context, state) => Scaffold(
+        appBar: AppBar(title: const Text("Settings")),
+        body: const Center(
+          child: Text("Pantalla de Configuración"),
+        ),
+      ),
+    ),
+    GoRoute(
+      path: '/about',
+      builder: (context, state) => Scaffold(
+        appBar: AppBar(title: const Text("About")),
+        body: const Center(
+          child: Text("Pantalla Acerca de"),
+        ),
+      ),
+    ),
+  ],
+);
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Mi Proyecto Seguro',
-      // PUNTO: THEMING - Configuración centralizada
-      themeMode: ThemeMode.system, 
+    return MaterialApp.router(
+      routerConfig: _router,
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.deepPurple,
-          brightness: Brightness.light,
-        ),
       ),
-      darkTheme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.deepPurple,
-          brightness: Brightness.dark,
-        ),
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
@@ -61,7 +78,6 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            // PUNTO: ACCESIBILIDAD - Semantics para lectores de pantalla
             Semantics(
               label: 'Texto indicativo del contador',
               child: const Text('Has pulsado el botón estas veces:'),
@@ -69,9 +85,21 @@ class _MyHomePageState extends State<MyHomePage> {
             Text(
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    // PUNTO: ACCESIBILIDAD - Asegurar que el texto sea escalable
-                    fontSize: 34, 
+                    fontSize: 34,
                   ),
+            ),
+            const SizedBox(height: 50),
+
+            ElevatedButton(
+              onPressed: () => context.go('/settings'),
+              child: const Text("Ir a Configuración"),
+            ),
+
+            const SizedBox(height: 20),
+
+            ElevatedButton(
+              onPressed: () => context.go('/about'),
+              child: const Text("Ir a acerca de"),
             ),
           ],
         ),
@@ -79,7 +107,6 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
         tooltip: 'Incrementar contador',
-        // PUNTO: ACCESIBILIDAD - Semantics en el botón
         child: Semantics(
           button: true,
           label: 'Añadir uno al contador',
